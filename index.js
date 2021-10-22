@@ -6,19 +6,10 @@ const path = require("path")
 
 let appIcon = null
 app.whenReady().then(() => {
-  recenticao=""
   appIcon = new Tray(path.resolve("./trayicon.png"))
   const contextMenu = Menu.buildFromTemplate([
-      {
-        label:"RPC Status: None",
-        type: 'normal'
-      },
-      {
-        label:"FG Status: Connecting...",
-        type: 'normal'
-      },
       { 
-        label: 'Open settings...',
+        label: 'Settings',
         type: 'normal',
         click: () => {
           popupwin = new BrowserWindow({
@@ -33,6 +24,10 @@ app.whenReady().then(() => {
         }
       },
       {
+        label:"About",
+        type: 'normal',
+      },
+      {
         label: 'Exit',
         type: 'normal',
         click: () => {
@@ -40,7 +35,7 @@ app.whenReady().then(() => {
         }
       }
   ])
-  setInterval(() => {
+  function updateRPC(){
     infogetter("127.0.0.1","8080",(info) => {
       console.log(info)
       client.updatePresence({
@@ -55,22 +50,11 @@ app.whenReady().then(() => {
         instance: true,
       })
     })
-  }, 15e3)
-
-  infogetter("127.0.0.1","8080",(info) => {
-    console.log(info)
-    client.updatePresence({
-      state: `SPD: ${info.airspeed.toFixed(0)} kt | ALT: ${info.altidude.toFixed(0)} ft`,
-      details: `Flying over ${info.airspace}`,
-      startTimestamp: Date.now(),
-      endTimestamp: Date.now() + 15000,
-      largeImageKey: info.icon,
-      largeImageText: info.aircraft,
-      smallImageKey: "paint",
-      smallImageText: info.paintjobtext,
-      instance: true,
-    })
-  })
-
+    setTimeout(updateRPC,15000)
+  }
+  console.log(appIcon)
+  
+  updateRPC()
+  
   appIcon.setContextMenu(contextMenu)
 })
