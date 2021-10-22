@@ -2,11 +2,11 @@ const fetch = require('cross-fetch');
 const { app, Menu, Tray, BrowserWindow } = require('electron')
 const client = require('discord-rich-presence')('900398628529664030');
 const infogetter = require('./infogetter.js')
-var path = require("path")
+const path = require("path")
 
 let appIcon = null
 app.whenReady().then(() => {
-
+  recenticao=""
   appIcon = new Tray(path.resolve("./trayicon.png"))
   const contextMenu = Menu.buildFromTemplate([
       {

@@ -69,24 +69,37 @@ module.exports = function(address,port,cb){
                 return res.json();
               })
               .then(airspeedres => {
-                icon = iconres.children[13].value
-                paintjob = "unknown"
-                paintjobtext = liveryres.value
-                if(geolocres.city == "") {
-                  if(geolocres.locality == "") {
-                    airspace = geolocres.principalSubdivision
-                  }else{
-                    airspace = geolocres.locality
+                fetch(`http://localhost:8080/json//environment/metar/data`)
+                .then(res => {
+                  if (res.status >= 400) {
+                    throw new Error("Bad response from server");
                   }
-                }else{
-                  airspace = geolocres.city
-                }
-                if(geolocres.countryCode == ""){
-                  airspace = geolocres.locality + "🌊"
-                }else{
-                  airspace = airspace + ` ${country2emoji(geolocres.countryCode)}`
-                }
-                cb({altidude:posres.children[2].value,airspeed:airspeedres.value ,aircraft:aircraft, icon:icon, paintjobicon:paintjob, paintjobtext:paintjobtext, airspace:airspace, latitude:posres.children[1].value, longitude:posres.children[0].value})
+                  return res.json();
+                })
+                .then(metarres => {
+                  icao = metarres.value.split(" ")[0]
+                  icon = iconres.children[13].value
+                  paintjob = "unknown"
+                  paintjobtext = liveryres.value
+                  if(geolocres.city == "") {
+                    if(geolocres.locality == "") {
+                      airspace = geolocres.principalSubdivision
+                    }else{
+                      airspace = geolocres.locality
+                    }
+                  }else{
+                    airspace = geolocres.city
+                  }
+                  if(geolocres.countryCode == ""){
+                    airspace = geolocres.locality + "🌊"
+                  }else{
+                    airspace = airspace + ` ${country2emoji(geolocres.countryCode)}`
+                  }
+                  cb({icao:icao,altidude:posres.children[2].value,airspeed:airspeedres.value ,aircraft:aircraft, icon:icon, paintjobicon:paintjob, paintjobtext:paintjobtext, airspace:airspace, latitude:posres.children[1].value, longitude:posres.children[0].value})
+                })
+                .catch(err => {
+                  console.error(err);
+                })
               })
               .catch(err => {
                 console.error(err);
