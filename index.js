@@ -1,25 +1,37 @@
 const fetch = require('cross-fetch');
-const { app, Menu, Tray, BrowserWindow } = require('electron')
-const client = require('discord-rich-presence')('900398628529664030');
+const { app, Menu, Tray, BrowserWindow, nativeImage } = require('electron')
 const infogetter = require('./infogetter.js')
 const path = require("path")
 
-let appIcon = null
 app.whenReady().then(() => {
-  appIcon = new Tray(path.resolve("./trayicon.png"))
+  const greendot = nativeImage.createFromPath(path.resolve("./trayicon_greendot.png"))
+  const reddot = nativeImage.createFromPath(path.resolve("./trayicon_reddot.png"))
+  appIcon = new Tray(nativeImage.createFromPath(path.resolve("./trayicon.png")))
+  appIcon.setToolTip("FGCompanion | Initializing...")
   const contextMenu = Menu.buildFromTemplate([
+      {
+        label: 'RPC',
+        type: 'checkbox',
+        click: () => {
+          if(contextMenu.items[0].checked){
+            console.log('Connecting RPC')
+            try{
+              client = require('discord-rich-presence')('900398628529664030')
+            }catch(err){
+              appIcon.setImage(reddot)
+            }
+          }else{
+            console.log('Disconnecting RPC')
+            client.disconnect()
+            client = null
+            appIcon.setImage(reddot)
+          }
+        }
+      },
       { 
         label: 'Settings',
         type: 'normal',
         click: () => {
-          popupwin = new BrowserWindow({
-            height:800,
-            width:600,
-          })
-          contextMenu.popup({
-            window: popupwin,
-          })
-          popupwin.loadFile('index.html');
           console.log('Opened settings')
         }
       },
@@ -35,26 +47,35 @@ app.whenReady().then(() => {
         }
       }
   ])
+
   function updateRPC(){
-    infogetter("127.0.0.1","8080",(info) => {
-      console.log(info)
-      client.updatePresence({
-        state: `SPD: ${info.airspeed.toFixed(0)} kt | ALT: ${info.altidude.toFixed(0)} ft`,
-        details: `Flying over ${info.airspace}`,
-        startTimestamp: Date.now(),
-        endTimestamp: Date.now() + 15000,
-        largeImageKey: info.icon.toLowerCase(),
-        largeImageText: info.aircraft,
-        smallImageKey: "paint",
-        smallImageText: info.paintjobtext,
-        instance: true,
+      infogetter("127.0.0.1","8080",(info) => {
+        console.log(info)
+        client.updatePresence({
+          state: `SPD: ${info.airspeed.toFixed(0)} kt | ALT: ${info.altidude.toFixed(0)} ft`,
+          details: `Flying over ${info.airspace}`,
+          startTimestamp: Date.now(),
+          endTimestamp: Date.now() + 15000,
+          largeImageKey: info.pngn.toLowerCase(),
+          largeImageText: info.aircraft,
+          smallImageKey: "paint",
+          smallImageText: info.paintjobtext,
+          instance: true,
+        })
+        appIcon.setImage(greendot)
+      },(error) => {
+        appIcon.setImage(reddot)
       })
-    })
     setTimeout(updateRPC,15000)
   }
-  console.log(appIcon)
-  
+  console.log('Connecting RPC')
+  try{
+    client = require('discord-rich-presence')('900398628529664030')
+  }catch(err){
+    appIcon.setImage(reddot)
+  }
+  contextMenu.items[0].checked = true
   updateRPC()
-  
+
   appIcon.setContextMenu(contextMenu)
 })

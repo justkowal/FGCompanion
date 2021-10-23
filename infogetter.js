@@ -19,7 +19,7 @@ function country2emoji(country_code) {
   }))) : "🌊";
 }
 
-module.exports = function(address,port,cb){
+module.exports = function(address,port,cb,errcb){
     fetch("http://localhost:8080/json//sim/description")
     .then(res => {
       if (res.status >= 400) {
@@ -80,7 +80,12 @@ module.exports = function(address,port,cb){
                   icao = metarres.value.split(" ")[0]
                   icon = iconres.children[13].value
                   paintjob = "unknown"
-                  paintjobtext = liveryres.value
+                  console.log(liveryres.value)
+                  if(liveryres.value == "" || liveryres.value == undefined) {
+                    paintjobtext = "No data available"
+                  }else{
+                    paintjobtext = liveryres.value
+                  }
                   if(geolocres.city == "") {
                     if(geolocres.locality == "") {
                       airspace = geolocres.principalSubdivision
@@ -98,30 +103,30 @@ module.exports = function(address,port,cb){
                   cb({icao:icao,altidude:posres.children[2].value,airspeed:airspeedres.value ,aircraft:aircraft, icon:icon, paintjobicon:paintjob, paintjobtext:paintjobtext, airspace:airspace, latitude:posres.children[1].value, longitude:posres.children[0].value})
                 })
                 .catch(err => {
-                  console.error(err);
+                  errcb(err)
                 })
               })
               .catch(err => {
-                console.error(err);
+                errcb(err)
               })
             })
             .catch(err => {
-              console.error(err);
+              errcb(err)
             })
           })
           .catch(err => {
-            console.error(err);
+            errcb(err)
           })
         })
         .catch(err => {
-          console.error(err);
+          errcb(err)
         })
       })
       .catch(err => {
-        console.error(err);
+        errcb(err)
       })
     })
     .catch(err => {
-      console.error(err);
+      errcb(err)
     })
 }
