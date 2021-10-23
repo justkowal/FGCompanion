@@ -8,3 +8,7 @@ This project is work in progress and is not polished. Code is messy and really b
 These things should be fixed in the future.
 Proceed with caution!
 
+####Add My Aircraft as icon!
+
+Because this repo is gaining a bit of attention, from now on you can request aircrafts using this form:
+https://forms.gle/dmEFvyCwyb1LnDXD7
