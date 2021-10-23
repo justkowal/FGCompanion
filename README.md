@@ -6,4 +6,8 @@ This project aims to be a go-to solution for enabling RPC capabilities in Flight
 
 This project is work in progress and is not polished. Code is messy and really bad at error handling.
 These things should be fixed in the future.
+<<<<<<< HEAD
 Proceed with caution!
+=======
+Proceed with caution!
+>>>>>>> 241bf9633265f5c0093acb4ca20896fcdb1193e5
