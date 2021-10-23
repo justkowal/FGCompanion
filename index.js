@@ -1,14 +1,17 @@
-const fetch = require('cross-fetch');
 const { app, Menu, Tray, BrowserWindow, nativeImage } = require('electron')
 const infogetter = require('./infogetter.js')
 const path = require("path")
 
 app.whenReady().then(() => {
+  app.on('window-all-closed', e => e.preventDefault() )
+
   const greendot = nativeImage.createFromPath(path.resolve("./trayicon_greendot.png"))
   const reddot = nativeImage.createFromPath(path.resolve("./trayicon_reddot.png"))
   appIcon = new Tray(nativeImage.createFromPath(path.resolve("./trayicon.png")))
-  appIcon.setToolTip("FGCompanion | Initializing...")
-  const contextMenu = Menu.buildFromTemplate([
+  appIcon.setToolTip("FGCompanion")
+
+  const contextMenu = Menu.buildFromTemplate(
+    [
       {
         label: 'RPC',
         type: 'checkbox',
@@ -33,6 +36,9 @@ app.whenReady().then(() => {
         type: 'normal',
         click: () => {
           console.log('Opened settings')
+          const win = new BrowserWindow({icon: __dirname + 'trayicon.png'})
+          win.removeMenu()
+          win.loadFile("index.html")
         }
       },
       {
@@ -46,7 +52,8 @@ app.whenReady().then(() => {
           process.exit(0)
         }
       }
-  ])
+    ]
+  )
 
   function updateRPC(){
       infogetter("127.0.0.1","8080",(info) => {
