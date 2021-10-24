@@ -5,7 +5,9 @@
   "description": "FlightGear Discord Rich Presence",
   "main": "index.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
   },
   "repository": {
     "type": "git",
@@ -18,11 +20,11 @@
   },
   "homepage": "https://github.com/hopkuba/FGCompanion#readme",
   "devDependencies": {
-    "electron": "^15.2.0",
-    "electron-packager": "^15.4.0"
+    "electron-prebuilt-compile": "15.2.0"
   },
   "dependencies": {
     "cross-fetch": "^3.1.4",
-    "discord-rich-presence": "^0.0.8"
+    "discord-rich-presence": "^0.0.8",
+    "electron-forge": "^5.2.4"
   }
 }
