@@ -1,5 +1,1 @@
-{
-    "statePattern": "SPD: {airspeed} kt | ALT: {altidude} ft",
-    "detailsPattern": "Flying over {airspace} {emoji}",
-    "autoOffRPC": false
-}
+{"statePattern":"SPD: {airspeed} kt | ALT: {alt} ft","detailsPattern":"Flying over {airspace} {emoji}","statePatternRoute":"SPD: {airspeed} kt | ALT: {alt} ft","detailsPatternRoute":"Flying from {depicao} to {desticao}","autoOffRPC":true}

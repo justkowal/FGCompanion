@@ -1,4 +1,4 @@
-const { app, Menu, Tray, BrowserWindow, nativeImage } = require('electron')
+const { app, Menu, Tray, BrowserWindow, nativeImage, ipcMain } = require('electron')
 const infogetter = require('./infogetter.js')
 const path = require("path")
 const fs = require('fs');
@@ -6,8 +6,12 @@ const fs = require('fs');
 var settings = {
   properties:{},
   reloadSettings: function(){
-    let rawdata = fs.readFileSync('settings.json');
-    this.properties = JSON.parse(rawdata);
+    let rawdata = fs.readFileSync('settings.json')
+    this.properties = JSON.parse(rawdata)
+  },
+  overwriteSettings: function(data){
+    fs.writeFileSync('settings.json', JSON.stringify(data))
+    this.reloadSettings()
   }
 }
 
@@ -20,7 +24,21 @@ function parseFormattedText(text,info){
 }
 
 app.whenReady().then(() => {
+  var startdate = Date.now()
   settings.reloadSettings()
+  ipcMain.on('get-settings', (event, arg) => {
+    settings.reloadSettings()
+    event.reply('get-settings-reply', settings.properties)
+  })
+  ipcMain.on('save-settings', (event, arg) => {
+    try{
+      settings.overwriteSettings(arg)
+      event.reply('save-settings-reply', "ok")
+    }catch(err){
+      event.reply('save-settings-reply', err.message)
+    }
+    
+  })
   app.on('window-all-closed', e => e.preventDefault())
   var suffix = ".png"
   if(process.platform === "win32"){
@@ -58,8 +76,13 @@ app.whenReady().then(() => {
         type: 'normal',
         click: () => {
           console.log('Opened settings')
-          const win = new BrowserWindow({icon: __dirname + 'trayicon.png'})
-          win.removeMenu()
+          const win = new BrowserWindow({
+            icon: __dirname + 'trayicon.png',
+            webPreferences: {
+              preload: path.join(__dirname, 'preload.js')
+            }
+          })
+          //win.removeMenu()
           win.loadFile("index.html")
         }
       },
@@ -79,6 +102,17 @@ app.whenReady().then(() => {
 
   function updateRPC(){
       infogetter("127.0.0.1","8080",(info) => {
+        if(settings.properties.autoOffRPC && !contextMenu.items[0].checked){
+          try{
+            console.log('Connecting RPC')
+            client = require('discord-rich-presence')('900398628529664030')
+            contextMenu.items[0].checked = true
+            appIcon.setContextMenu(contextMenu)
+            startdate = Date.now()
+          }catch(err){
+            appIcon.setImage(reddot)
+          }
+        }
         var ete = 0
         if(info.ete == "Unknown"){
           ete = undefined
@@ -86,25 +120,49 @@ app.whenReady().then(() => {
           ete = Date.now() + info.ete*1000
         }
         console.log(info)
-        client.updatePresence({
-          state: parseFormattedText(settings.properties.statePattern, info),
-          details: parseFormattedText(settings.properties.detailsPattern, info),
-          startTimestamp: Date.now(),
-          endTimestamp: ete,
-          largeImageKey: info.icon,
-          largeImageText: info.aircraft,
-          smallImageKey: "paint",
-          smallImageText: info.paintjobtext,
-          buttons : [
-            {label : "🐱‍💻Github Repo" , url : "https://github.com/justkowal/FGCompanion"},
-          ],
-          instance: true,
+        if(info.desticao == '' || info.depicao == ''){
+            client.updatePresence({
+              state: parseFormattedText(settings.properties.statePattern, info),
+              details: parseFormattedText(settings.properties.detailsPattern, info),
+              startTimestamp: startdate,
+              endTimestamp: ete,
+              largeImageKey: info.icon,
+              largeImageText: info.aircraft,
+              smallImageKey: "paint",
+              smallImageText: info.paintjobtext,
+              buttons : [
+                {label : "🐱‍💻Github Repo" , url : "https://github.com/justkowal/FGCompanion"},
+              ],
+              instance: true,
+            })
+          }else{
+            client.updatePresence({
+              state: parseFormattedText(settings.properties.statePatternRoute, info),
+              details: parseFormattedText(settings.properties.detailsPatternRoute, info),
+              startTimestamp: startdate,
+              endTimestamp: ete,
+              largeImageKey: info.icon,
+              largeImageText: info.aircraft,
+              smallImageKey: "paint",
+              smallImageText: info.paintjobtext,
+              buttons : [
+                {label : "🐱‍💻Github Repo" , url : "https://github.com/justkowal/FGCompanion"},
+              ],
+              instance: true,
+            })
+          }
+          appIcon.setImage(greendot)
+        },(error) => {
+          console.log(error)
+          appIcon.setImage(reddot)
+          if(settings.properties.autoOffRPC){
+            console.log('Disconnecting RPC')
+            contextMenu.items[0].checked = false
+            appIcon.setContextMenu(contextMenu)
+            client.disconnect()
+            client = null
+          }
         })
-        appIcon.setImage(greendot)
-      },(error) => {
-        console.log(error)
-        appIcon.setImage(reddot)
-      })
     setTimeout(updateRPC,15000)
   }
   console.log('Connecting RPC')

@@ -135,7 +135,7 @@ module.exports = function(address,port,cb,errcb){
                             depicao:departureres.value,
                             ete:ete,
                             icao:icao,
-                            altidude:posres.children[2].value.toFixed(0),
+                            alt:posres.children[2].value.toFixed(0),
                             airspeed:airspeedres.value.toFixed(0),
                             aircraft:aircraft,
                             icon:icon.toLowerCase(),

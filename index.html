@@ -3,11 +3,17 @@
   <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="style.css" type="text/css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link rel="icon", href="trayicon.png"> 
     <title>FGCompanion Settings</title>
   </head>
-  <body>
+  <body style="overflow: hidden;">
+    <div class="fixed-action-btn">
+      <a onclick="saveSettings()" class="btn-floating btn-large black">
+        <i class="large material-icons">save</i>
+      </a>
+    </div>
     <div class="row">
       <div class="col s12">
         <ul class="tabs">
@@ -23,24 +29,61 @@
         </div>
       </div>
       <div id="tab2" class="col s12">
-        <div class="center">
-          <h3>Nothing is there yet.</h3>
-        </div>
-        <!--<div class="row">
-          <br><br>
+        <h6>Available properties:</h6>
+        <div class="row">
           <div class="col s6">
-            Raw JSON Data:
-            <pre>{
-  "product-link": "https://example.com/product-link",
-  "teaser_image": "https://example.com/teaser-image",
-  "product_image_first": "https://example.com/product-image-first",
-  "headline": "Example headline",
-}</pre>
+            <p>
+              {desticao} - The ICAO of currently selected destination<br>
+              {depicao} - The ICAO of currently selected departure location<br>
+              {ete} - [DEV] Estimated time in seconds left to destination<br>
+              {icao} - Nearest airport ICAO (based on METAR report)<br>
+              {alt} - Current altitude<br>
+              {airspeed} - Current airspeed<br>
+              {aircraft} - Name of currently selected aircraft
+            </p>
           </div>
           <div class="col s6">
-            Preview:
+            <p>
+              {icon} - [DEV] ID of aircraft for rendering RPC icons<br>
+              {paintjobtext} - Name of currently selected livery<br>
+              {airspace} - Reverse geocoded name of region you are flying above<br>
+              {emoji} - Emoji coresponding to Airspace name. Can be country flag or ocean<br>
+              {latitude} - [DEV] Current latitude<br>
+              {longitude} - [DEV] Current longtitude
+            </p>
           </div>
-        </div>-->
+          </div>
+          <br>
+          <div class="row">
+            <div class="input-field col s6">
+              <input placeholder="SPD: {airspeed} kt | ALT: {altidude} ft" id="statePattern" type="text">
+              <label for="statePattern">State rendering pattern</label>
+            </div>
+            <div class="input-field col s6">
+              <input placeholder="Flying over {airspace} {emoji}" id="detailsPattern" type="text">
+              <label for="detailsPattern">Details rendering pattern</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s6">
+              <input placeholder="SPD: {airspeed} kt | ALT: {altidude} ft" id="statePatternRoute" type="text">
+              <label for="statePatternRoute">State rendering pattern when route is set</label>
+            </div>
+            <div class="input-field col s6">
+              <input placeholder="Flying over {airspace} {emoji}" id="detailsPatternRoute" type="text">
+              <label for="detailsPatternRoute">Details rendering pattern when route is set</label>
+            </div>
+          </div>
+          <label for="rpcautooff">RPC Auto Off when FG Connection lost</label>
+          <div class="switch">
+            <label>
+              Off
+              <input id="rpcautooff" type="checkbox">
+              <span class="lever"></span>
+              On
+            </label>
+          </div>
+        </p>
       </div>
       <div id="tab3" class="col s12">
         <div class="center">
@@ -61,10 +104,38 @@
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script>
+      api.send('get-settings',"")
+      api.recieve('get-settings-reply', (arg,event)=>{
+          window.settings = arg[0]
+          console.log(window.settings) 
+          document.getElementById('statePattern').value = settings.statePattern
+          document.getElementById('detailsPattern').value = settings.detailsPattern
+          document.getElementById('statePatternRoute').value = settings.statePatternRoute
+          document.getElementById('detailsPatternRoute').value = settings.detailsPatternRoute
+          document.getElementById('rpcautooff').checked = settings.autoOffRPC
+      })
+      api.recieve('save-settings-reply',(arg)=>{
+          if(arg == "ok"){
+            M.toast({html: 'Settings Saved!', classes: 'rounded green'})
+          }else{
+            M.toast({html: 'Error occured!', classes: 'rounded red'});
+          }  
+      })
+      function saveSettings(){
+        api.send('save-settings',{
+          statePattern: document.getElementById('statePattern').value,
+          detailsPattern: document.getElementById('detailsPattern').value,
+          statePatternRoute: document.getElementById('statePatternRoute').value,
+          detailsPatternRoute: document.getElementById('detailsPatternRoute').value,
+          autoOffRPC: document.getElementById('rpcautooff').checked
+        })
+        
+      }
       var el = document.querySelector('.tabs')
       var instance = M.Tabs.init(el);
-      var el = document.querySelectorAll('.tooltipped');
+      var el = document.querySelectorAll('.tooltipped')
       var instances = M.Tooltip.init(el);
+      
     </script>
   </body>
 </html>
