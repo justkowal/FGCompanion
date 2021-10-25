@@ -1,0 +1,5 @@
+{
+    "statePattern": "SPD: {airspeed} kt | ALT: {altidude} ft",
+    "detailsPattern": "Flying over {airspace} {emoji}",
+    "autoOffRPC": false
+}

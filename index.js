@@ -1,8 +1,26 @@
 const { app, Menu, Tray, BrowserWindow, nativeImage } = require('electron')
 const infogetter = require('./infogetter.js')
 const path = require("path")
+const fs = require('fs');
+
+var settings = {
+  properties:{},
+  reloadSettings: function(){
+    let rawdata = fs.readFileSync('settings.json');
+    this.properties = JSON.parse(rawdata);
+  }
+}
+
+function parseFormattedText(text,info){
+  var formattedText = text
+  Object.keys(info).forEach(key => {
+    formattedText = formattedText.replaceAll(`{${key}}`,info[key])
+  })
+  return formattedText
+}
 
 app.whenReady().then(() => {
+  settings.reloadSettings()
   app.on('window-all-closed', e => e.preventDefault())
   var suffix = ".png"
   if(process.platform === "win32"){
@@ -61,16 +79,25 @@ app.whenReady().then(() => {
 
   function updateRPC(){
       infogetter("127.0.0.1","8080",(info) => {
+        var ete = 0
+        if(info.ete == "Unknown"){
+          ete = undefined
+        }else{
+          ete = Date.now() + info.ete*1000
+        }
         console.log(info)
         client.updatePresence({
-          state: `SPD: ${info.airspeed.toFixed(0)} kt | ALT: ${info.altidude.toFixed(0)} ft`,
-          details: `Flying over ${info.airspace}`,
+          state: parseFormattedText(settings.properties.statePattern, info),
+          details: parseFormattedText(settings.properties.detailsPattern, info),
           startTimestamp: Date.now(),
-          endTimestamp: Date.now() + 15000,
-          largeImageKey: info.icon.toLowerCase(),
+          endTimestamp: ete,
+          largeImageKey: info.icon,
           largeImageText: info.aircraft,
           smallImageKey: "paint",
           smallImageText: info.paintjobtext,
+          buttons : [
+            {label : "🐱‍💻Github Repo" , url : "https://github.com/justkowal/FGCompanion"},
+          ],
           instance: true,
         })
         appIcon.setImage(greendot)
