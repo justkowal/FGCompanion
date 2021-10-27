@@ -1,4 +1,4 @@
-const { app, Menu, Tray, BrowserWindow, nativeImage, ipcMain } = require('electron')
+const { app, Menu, Tray, BrowserWindow, ipcMain } = require('electron')
 const infogetter = require('./infogetter.js')
 const path = require("path")
 const fs = require('fs');
@@ -125,7 +125,7 @@ app.whenReady().then(() => {
               state: parseFormattedText(settings.properties.statePattern, info),
               details: parseFormattedText(settings.properties.detailsPattern, info),
               startTimestamp: startdate,
-              endTimestamp: ete,
+              endTimestamp: undefined,
               largeImageKey: info.icon,
               largeImageText: info.aircraft,
               smallImageKey: "paint",
