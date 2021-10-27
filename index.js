@@ -131,7 +131,7 @@ app.whenReady().then(() => {
               smallImageKey: "paint",
               smallImageText: info.paintjobtext,
               buttons : [
-                {label : "🐱‍💻Github Repo" , url : "https://github.com/justkowal/FGCompanion"},
+                (settings.properties.showRepoButton) ? {label : "🐱‍💻Github Repo" , url : "https://github.com/justkowal/FGCompanion"} : undefined ,
               ],
               instance: true,
             })
@@ -146,7 +146,7 @@ app.whenReady().then(() => {
               smallImageKey: "paint",
               smallImageText: info.paintjobtext,
               buttons : [
-                {label : "🐱‍💻Github Repo" , url : "https://github.com/justkowal/FGCompanion"},
+                (settings.properties.showRepoButton) ? {label : "🐱‍💻Github Repo" , url : "https://github.com/justkowal/FGCompanion"} : undefined ,
               ],
               instance: true,
             })
