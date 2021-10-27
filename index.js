@@ -125,13 +125,13 @@ app.whenReady().then(() => {
               state: parseFormattedText(settings.properties.statePattern, info),
               details: parseFormattedText(settings.properties.detailsPattern, info),
               startTimestamp: startdate,
-              endTimestamp: ete,
+              endTimestamp: undefined,
               largeImageKey: info.icon,
               largeImageText: info.aircraft,
               smallImageKey: "paint",
               smallImageText: info.paintjobtext,
               buttons : [
-                {label : "🐱‍💻Github Repo" , url : "https://github.com/justkowal/FGCompanion"},
+                (settings.properties.showRepoButton) ? {label : "🐱‍💻Github Repo" , url : "https://github.com/justkowal/FGCompanion"} : undefined ,
               ],
               instance: true,
             })
@@ -146,7 +146,7 @@ app.whenReady().then(() => {
               smallImageKey: "paint",
               smallImageText: info.paintjobtext,
               buttons : [
-                {label : "🐱‍💻Github Repo" , url : "https://github.com/justkowal/FGCompanion"},
+                (settings.properties.showRepoButton) ? {label : "🐱‍💻Github Repo" , url : "https://github.com/justkowal/FGCompanion"} : undefined ,
               ],
               instance: true,
             })

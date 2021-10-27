@@ -24,8 +24,15 @@
         </ul>
       </div>
       <div id="tab1" class="col s12">
-        <div class="center">
-          <h3>Nothing is there yet.</h3>
+        <h5>General Settings</h5>
+        <label for="showRepoButton">Show repo ads (tysm for turning on)</label>
+        <div class="switch">
+          <label>
+            Off
+            <input id="showRepoButton" type="checkbox">
+            <span class="lever"></span>
+            On
+          </label>
         </div>
       </div>
       <div id="tab2" class="col s12">
@@ -113,6 +120,7 @@
           document.getElementById('statePatternRoute').value = settings.statePatternRoute
           document.getElementById('detailsPatternRoute').value = settings.detailsPatternRoute
           document.getElementById('rpcautooff').checked = settings.autoOffRPC
+          document.getElementById('showRepoButton').checked = settings.showRepoButton
       })
       api.recieve('save-settings-reply',(arg)=>{
           if(arg == "ok"){
@@ -127,7 +135,8 @@
           detailsPattern: document.getElementById('detailsPattern').value,
           statePatternRoute: document.getElementById('statePatternRoute').value,
           detailsPatternRoute: document.getElementById('detailsPatternRoute').value,
-          autoOffRPC: document.getElementById('rpcautooff').checked
+          autoOffRPC: document.getElementById('rpcautooff').checked,
+          showRepoButton: document.getElementById('showRepoButton').checked
         })
         
       }
