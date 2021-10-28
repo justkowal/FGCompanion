@@ -15,7 +15,7 @@ Proceed with caution!
 - [X] Discord Rich Presence
   - [X] Basic Rich Presence
   - [X] Customization Options
-  - [ ] Custom Placeholders (Coming Soon)
+  - [X] Custom Placeholders
   - [ ] Join in Multiplayer (Coming Soon)
 - [ ] Addon App Store (Coming Soon)
 - [ ] LiveATC Dynamic Radio
