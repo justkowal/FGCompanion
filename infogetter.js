@@ -1,4 +1,5 @@
 const fetch = require('cross-fetch');
+const customprops = require('./customplaceholders.js')
 
 
 function country2emoji(country_code) {
@@ -130,22 +131,23 @@ module.exports = function(address,port,cb,errcb){
                         }else{
                           ete = etares.value
                         }
-                        cb({
-                            desticao:destinationres.value,
-                            depicao:departureres.value,
-                            ete:ete,
-                            icao:icao,
-                            alt:posres.children[2].value.toFixed(0),
-                            airspeed:airspeedres.value.toFixed(0),
-                            aircraft:aircraft,
-                            icon:icon.toLowerCase(),
-                            paintjobicon:paintjob,
-                            paintjobtext:paintjobtext,
-                            airspace:airspace,
-                            emoji:emoji,
-                            latitude:posres.children[1].value,
-                            longitude:posres.children[0].value
-                          })
+                        customprops(cb,{
+                          desticao:destinationres.value,
+                          depicao:departureres.value,
+                          ete:ete,
+                          icao:icao,
+                          alt:posres.children[2].value.toFixed(0),
+                          airspeed:airspeedres.value.toFixed(0),
+                          aircraft:aircraft,
+                          icon:icon.toLowerCase(),
+                          paintjobicon:paintjob,
+                          paintjobtext:paintjobtext,
+                          airspace:airspace,
+                          emoji:emoji,
+                          latitude:posres.children[1].value,
+                          longitude:posres.children[0].value
+                        }
+                        )
                       })
                       .catch(err => {
                         errcb(err)
