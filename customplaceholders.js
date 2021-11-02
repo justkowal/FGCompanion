@@ -22,6 +22,8 @@ module.exports = function(callback, stockplaceholders) {
         plhd2:val
     }
     */
+    var customplaceholders = {
+    }
 
     callback({...stockplaceholders, ...customplaceholders})
 }

@@ -130,9 +130,7 @@ app.whenReady().then(() => {
               largeImageText: info.aircraft,
               smallImageKey: "paint",
               smallImageText: info.paintjobtext,
-              buttons : [
-                (settings.properties.showRepoButton) ? {label : "🐱‍💻Github Repo" , url : "https://github.com/justkowal/FGCompanion"} : undefined ,
-              ],
+              buttons : (settings.properties.showRepoButton) ? [{label : "🐱‍💻Github Repo" , url : "https://github.com/justkowal/FGCompanion"}] : undefined ,
               instance: true,
             })
           }else{
@@ -145,9 +143,7 @@ app.whenReady().then(() => {
               largeImageText: info.aircraft,
               smallImageKey: "paint",
               smallImageText: info.paintjobtext,
-              buttons : [
-                (settings.properties.showRepoButton) ? {label : "🐱‍💻Github Repo" , url : "https://github.com/justkowal/FGCompanion"} : undefined ,
-              ],
+              buttons : (settings.properties.showRepoButton) ? [{label : "🐱‍💻Github Repo" , url : "https://github.com/justkowal/FGCompanion"}] : undefined ,
               instance: true,
             })
           }

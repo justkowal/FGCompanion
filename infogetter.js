@@ -21,15 +21,19 @@ function country2emoji(country_code) {
 }
 
 module.exports = function(address,port,cb,errcb){
-    fetch("http://localhost:8080/json//sim/description")
-    .then(res => {
-      if (res.status >= 400) {
-        throw new Error("Bad response from server");
-      }
-      return res.json();
-    })
-    .then(aircraftres => {
-      aircraft = aircraftres.value
+  const promises = [
+    new Promise(function(resolve,reject){
+      fetch("http://localhost:8080/json//sim/description")
+      .then(res => {
+        if (res.status >= 400) {
+          throw new Error("Bad response from server");
+        }
+        return res.json();
+      })
+      .then(resolve)
+      .catch(reject)
+    }),
+    new Promise(function(resolve,reject){
       fetch("http://localhost:8080/json//position")
       .then(res => {
         if (res.status >= 400) {
@@ -46,146 +50,139 @@ module.exports = function(address,port,cb,errcb){
           return res.json();
         })
         .then(geolocres => {
-          fetch(`http://localhost:8080/json//sim`)
-          .then(res => {
-            if (res.status >= 400) {
-              throw new Error("Bad response from server");
-            }
-            return res.json();
+          resolve({
+            latitude: posres.children[1].value,
+            longitude: posres.children[0].value,
+            altitude: posres.children[2].value,
+            geolocres: geolocres
           })
-          .then(iconres => {
-            fetch(`http://localhost:8080/json//sim/model/livery/name`)
-            .then(res => {
-              if (res.status >= 400) {
-                throw new Error("Bad response from server");
-              }
-              return res.json();
-            })
-            .then(liveryres => {
-              fetch(`http://localhost:8080/json//instrumentation/airspeed-indicator/true-speed-kt`)
-              .then(res => {
-                if (res.status >= 400) {
-                  throw new Error("Bad response from server");
-                }
-                return res.json();
-              })
-              .then(airspeedres => {
-                fetch(`http://localhost:8080/json//environment/metar/data`)
-                .then(res => {
-                  if (res.status >= 400) {
-                    throw new Error("Bad response from server");
-                  }
-                  return res.json();
-                })
-                .then(metarres => {
-                  fetch(`http://localhost:8080/json//autopilot/route-manager/ete`)
-                  .then(res => {
-                    if (res.status >= 400) {
-                      throw new Error("Bad response from server");
-                    }
-                    return res.json();
-                  })
-                  .then(etares => {
-                    fetch(`http://localhost:8080/json//autopilot/route-manager/departure/airport`)
-                    .then(res => {
-                      if (res.status >= 400) {
-                        throw new Error("Bad response from server");
-                      }
-                      return res.json();
-                    })
-                    .then(departureres => {
-                      fetch(`http://localhost:8080/json//autopilot/route-manager/destination/airport`)
-                      .then(res => {
-                        if (res.status >= 400) {
-                          throw new Error("Bad response from server");
-                        }
-                        return res.json();
-                      })
-                      .then(destinationres => {
-                        icao = metarres.value.split(" ")[2]
-                        icon = iconres.children[13].value
-                        paintjob = "unknown"
-                        if(liveryres.value == "" || liveryres.value == undefined) {
-                          paintjobtext = "No data available"
-                        }else{
-                          paintjobtext = liveryres.value
-                        }
-                        if(geolocres.city == "") {
-                          if(geolocres.locality == "") {
-                            airspace = geolocres.principalSubdivision
-                          }else{
-                            airspace = geolocres.locality
-                          }
-                        }else{
-                          airspace = geolocres.city
-                        }
-                        if(geolocres.countryCode == ""){
-                          airspace = geolocres.locality
-                          emoji = "🌊"
-                        }else{
-                          airspace = airspace
-                          emoji = country2emoji(geolocres.countryCode)
-                        }
-                        if(etares.value > "360000" || etares.value == 0){
-                          ete = "Unknown"
-                        }else{
-                          ete = etares.value
-                        }
-                        customprops(cb,{
-                          desticao:destinationres.value,
-                          depicao:departureres.value,
-                          ete:ete,
-                          icao:icao,
-                          alt:posres.children[2].value.toFixed(0),
-                          airspeed:airspeedres.value.toFixed(0),
-                          aircraft:aircraft,
-                          icon:icon.toLowerCase(),
-                          paintjobicon:paintjob,
-                          paintjobtext:paintjobtext,
-                          airspace:airspace,
-                          emoji:emoji,
-                          latitude:posres.children[1].value,
-                          longitude:posres.children[0].value
-                        }
-                        )
-                      })
-                      .catch(err => {
-                        errcb(err)
-                      })
-                    })
-                    .catch(err => {
-                      errcb(err)
-                    })
-                  })
-                  .catch(err => {
-                    errcb(err)
-                  })
-                })
-                .catch(err => {
-                  errcb(err)
-                })
-              })
-              .catch(err => {
-                errcb(err)
-              })
-            })
-            .catch(err => {
-              errcb(err)
-            })
-          })
-          .catch(err => {
-            errcb(err)
-          })
-        })
-        .catch(err => {
-          errcb(err)
-        })
+        }).catch(reject)
+      }).catch(reject)
+    }),
+    new Promise(function(resolve,reject){
+      fetch(`http://localhost:8080/json//sim`)
+      .then(res => {
+        if (res.status >= 400) {
+          throw new Error("Bad response from server");
+        }
+         return res.json();
       })
-      .catch(err => {
-        errcb(err)
+      .then(resolve)
+      .catch(reject)
+    }),
+    new Promise(function(resolve,reject){
+      fetch(`http://localhost:8080/json//sim/model/livery/name`)
+      .then(res => {
+         if (res.status >= 400) {
+          throw new Error("Bad response from server");
+        }
+        return res.json();
       })
-    })
-    .catch(err => {
-      errcb(err)
-    })
+      .then(resolve)
+      .catch(reject)
+    }),
+    new Promise(function(resolve,reject){
+      fetch(`http://localhost:8080/json//instrumentation/airspeed-indicator/true-speed-kt`)
+      .then(res => {
+        if (res.status >= 400) {
+          throw new Error("Bad response from server");
+        }
+        return res.json();
+      })
+      .then(resolve)
+      .catch(reject)
+    }),
+    new Promise(function(resolve,reject){
+      fetch(`http://localhost:8080/json//environment/metar/data`)
+      .then(res => {
+        if (res.status >= 400) {
+          throw new Error("Bad response from server");
+        }
+        return res.json();
+      })
+      .then(resolve)
+      .catch(reject)
+    }),
+    new Promise(function(resolve,reject){
+      fetch(`http://localhost:8080/json//autopilot/route-manager/ete`)
+      .then(res => {
+        if (res.status >= 400) {
+          throw new Error("Bad response from server");
+        }
+        return res.json();
+      })
+      .then(resolve)
+      .catch(reject)
+    }),
+    new Promise(function(resolve,reject){
+      fetch(`http://localhost:8080/json//autopilot/route-manager/departure/airport`)
+      .then(res => {
+        if (res.status >= 400) {
+          throw new Error("Bad response from server");
+        }
+        return res.json();
+      })
+      .then(resolve)
+      .catch(reject)
+    }),
+    new Promise(function(resolve,reject){
+      fetch(`http://localhost:8080/json//autopilot/route-manager/destination/airport`)
+      .then(res => {
+        if (res.status >= 400) {
+          throw new Error("Bad response from server");
+        }
+        return res.json();
+      })
+      .then(resolve)
+      .catch(reject)
+    }),
+  ];
+  Promise.all(promises).then(vals => {
+    icao = vals[5].value.split(" ")[2]
+    icon = vals[2].children[13].value
+    paintjob = "unknown"
+    if(vals[3].value == "" || vals[3].value == undefined) {
+      paintjobtext = "No data available"
+    }else{
+      paintjobtext = vals[3].value
+    }
+    if(vals[1].geolocres.city == "") {
+      if(vals[1].geolocres.locality == "") {
+        airspace = vals[1].geolocres.principalSubdivision
+      }else{
+        airspace = vals[1].geolocres.locality
+      }
+    }else{
+      airspace = vals[1].geolocres.city
+    }
+    if(vals[1].geolocres.countryCode == ""){
+      airspace = vals[1].geolocres.locality
+      emoji = "🌊"
+    }else{
+      airspace = airspace
+      emoji = country2emoji(vals[1].geolocres.countryCode)
+    }
+    if(vals[6].value > "360000" || vals[6].value == 0){
+      ete = "Unknown"
+    }else{
+      ete = vals[6].value
+    }
+    customprops(cb,{
+        desticao:vals[8].value,
+        depicao:vals[7].value,
+        ete:ete,
+        icao:icao,
+        alt:vals[1].altitude.toFixed(0),
+        airspeed:vals[4].value.toFixed(0),
+        aircraft:vals[0].value,
+        icon:icon.toLowerCase(),
+        paintjobicon:paintjob,
+        paintjobtext:paintjobtext,
+        airspace:airspace,
+        emoji:emoji,
+        latitude:vals[1].latitude,
+        longitude:vals[1].longitude
+      }
+    )
+  }).catch(errcb)                          
 }
