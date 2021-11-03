@@ -102,7 +102,7 @@ app.whenReady().then(() => {
 
   function updateRPC(){
       infogetter("127.0.0.1","8080",(info) => {
-        if(settings.properties.autoOffRPC && !contextMenu.items[0].checked){
+        if(settings.properties.autoOffRPC && contextMenu.items[0].checked){
           try{
             console.log('Connecting RPC')
             client = require('discord-rich-presence')('900398628529664030')
@@ -151,9 +151,8 @@ app.whenReady().then(() => {
         },(error) => {
           console.log(error)
           appIcon.setImage(reddot)
-          if(settings.properties.autoOffRPC){
+          if(settings.properties.autoOffRPC && contextMenu.items[0].checked){
             console.log('Disconnecting RPC')
-            contextMenu.items[0].checked = false
             appIcon.setContextMenu(contextMenu)
             client.disconnect()
             client = null
