@@ -80,7 +80,9 @@ app.whenReady().then(() => {
             icon: __dirname + 'trayicon.png',
             webPreferences: {
               preload: path.join(__dirname, 'preload.js')
-            }
+            },
+            width: 1000,
+            height: 650,
           })
           //win.removeMenu()
           win.loadFile("index.html")

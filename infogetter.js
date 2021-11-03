@@ -175,7 +175,7 @@ module.exports = function(address,port,cb,errcb){
         alt:vals[1].altitude.toFixed(0),
         airspeed:vals[4].value.toFixed(0),
         aircraft:vals[0].value,
-        icon:icon.toLowerCase(),
+        icon:icon.split("-")[0].toLowerCase(),
         paintjobicon:paintjob,
         paintjobtext:paintjobtext,
         airspace:airspace,
