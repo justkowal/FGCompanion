@@ -17,6 +17,7 @@ Proceed with caution!
   - [X] Customization Options
   - [X] Custom Placeholders
   - [ ] Join in Multiplayer (Coming Soon)
+- [ ] Auto Updates (Coming REALLY Soon)
 - [ ] Addon App Store (Coming Soon)
 - [ ] LiveATC Dynamic Radio
 - [ ] Better Flight Stats
