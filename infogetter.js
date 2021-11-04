@@ -23,7 +23,7 @@ function country2emoji(country_code) {
 module.exports = function(address,port,cb,errcb){
   const promises = [
     new Promise(function(resolve,reject){
-      fetch("http://localhost:8080/json//sim/description")
+      fetch(`http://${address}:${port}/json//sim/description`)
       .then(res => {
         if (res.status >= 400) {
           throw new Error("Bad response from server");
@@ -34,7 +34,7 @@ module.exports = function(address,port,cb,errcb){
       .catch(reject)
     }),
     new Promise(function(resolve,reject){
-      fetch("http://localhost:8080/json//position")
+      fetch(`http://${address}:${port}/json//position`)
       .then(res => {
         if (res.status >= 400) {
           throw new Error("Bad response from server");
@@ -60,7 +60,7 @@ module.exports = function(address,port,cb,errcb){
       }).catch(reject)
     }),
     new Promise(function(resolve,reject){
-      fetch(`http://localhost:8080/json//sim`)
+      fetch(`http://${address}:${port}/json//sim`)
       .then(res => {
         if (res.status >= 400) {
           throw new Error("Bad response from server");
@@ -71,7 +71,7 @@ module.exports = function(address,port,cb,errcb){
       .catch(reject)
     }),
     new Promise(function(resolve,reject){
-      fetch(`http://localhost:8080/json//sim/model/livery/name`)
+      fetch(`http://${address}:${port}/json//sim/model/livery/name`)
       .then(res => {
          if (res.status >= 400) {
           throw new Error("Bad response from server");
@@ -82,7 +82,7 @@ module.exports = function(address,port,cb,errcb){
       .catch(reject)
     }),
     new Promise(function(resolve,reject){
-      fetch(`http://localhost:8080/json//instrumentation/airspeed-indicator/true-speed-kt`)
+      fetch(`http://${address}:${port}/json//instrumentation/airspeed-indicator/true-speed-kt`)
       .then(res => {
         if (res.status >= 400) {
           throw new Error("Bad response from server");
@@ -93,7 +93,7 @@ module.exports = function(address,port,cb,errcb){
       .catch(reject)
     }),
     new Promise(function(resolve,reject){
-      fetch(`http://localhost:8080/json//environment/metar/data`)
+      fetch(`http://${address}:${port}/json//environment/metar/data`)
       .then(res => {
         if (res.status >= 400) {
           throw new Error("Bad response from server");
@@ -104,7 +104,7 @@ module.exports = function(address,port,cb,errcb){
       .catch(reject)
     }),
     new Promise(function(resolve,reject){
-      fetch(`http://localhost:8080/json//autopilot/route-manager/ete`)
+      fetch(`http://${address}:${port}/json//autopilot/route-manager/ete`)
       .then(res => {
         if (res.status >= 400) {
           throw new Error("Bad response from server");
@@ -115,7 +115,7 @@ module.exports = function(address,port,cb,errcb){
       .catch(reject)
     }),
     new Promise(function(resolve,reject){
-      fetch(`http://localhost:8080/json//autopilot/route-manager/departure/airport`)
+      fetch(`http://${address}:${port}/json//autopilot/route-manager/departure/airport`)
       .then(res => {
         if (res.status >= 400) {
           throw new Error("Bad response from server");
@@ -126,7 +126,7 @@ module.exports = function(address,port,cb,errcb){
       .catch(reject)
     }),
     new Promise(function(resolve,reject){
-      fetch(`http://localhost:8080/json//autopilot/route-manager/destination/airport`)
+      fetch(`http://${address}:${port}/json//autopilot/route-manager/destination/airport`)
       .then(res => {
         if (res.status >= 400) {
           throw new Error("Bad response from server");

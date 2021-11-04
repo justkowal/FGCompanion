@@ -23,6 +23,7 @@ module.exports = function(callback, stockplaceholders) {
     }
     */
     var customplaceholders = {
+        
     }
 
     callback({...stockplaceholders, ...customplaceholders})

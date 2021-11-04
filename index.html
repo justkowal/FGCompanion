@@ -19,7 +19,7 @@
         <ul class="tabs">
           <li class="tab col s3"><a href="#tab1">General</a></li>
           <li class="tab col s3"><a class="active" href="#tab2">Rich Presence</a></li>
-          <li class="tab col s3 disabled tooltipped" data-position="bottom" data-tooltip="Coming soon"><a href="#tab3">LiveATC</a></li>
+          <li class="tab col s3 disabled"><a href="#tab3">Addon Store</a></li>
           <li class="tab col s3"><a href="#tab4">Credits & About</a></li>
         </ul>
       </div>
@@ -33,6 +33,13 @@
             <span class="lever"></span>
             On
           </label>
+        </div>
+        <br>
+        <div class="row">
+          <div class="input-field col s6">
+            <input placeholder="url1,url2,url3" id="addonSources" type="text">
+            <label for="addonSources">Alternative sources for Addon Store</label>
+          </div>
         </div>
       </div>
       <div id="tab2" class="col s12">
@@ -90,12 +97,20 @@
               On
             </label>
           </div>
+          <br>
+          <div class="row">
+            <div class="input-field col s6">
+              <input placeholder="localhost" id="address" type="text">
+              <label for="address">Phi Server address</label>
+            </div>
+            <div class="input-field col s6">
+              <input placeholder="8080" id="port" type="text">
+              <label for="port">Phi Server port</label>
+            </div>
+          </div>
         </p>
       </div>
       <div id="tab3" class="col s12">
-        <div class="center">
-          <h3>Nothing is there yet.</h3>
-        </div>
       </div>
       <div id="tab4" class="col s12">
         <div class="container">
@@ -121,6 +136,8 @@
           document.getElementById('detailsPatternRoute').value = settings.detailsPatternRoute
           document.getElementById('rpcautooff').checked = settings.autoOffRPC
           document.getElementById('showRepoButton').checked = settings.showRepoButton
+          document.getElementById('address').value = settings.address
+          document.getElementById('port').value = settings.port
       })
       api.recieve('save-settings-reply',(arg)=>{
           if(arg == "ok"){
@@ -136,7 +153,9 @@
           statePatternRoute: document.getElementById('statePatternRoute').value,
           detailsPatternRoute: document.getElementById('detailsPatternRoute').value,
           autoOffRPC: document.getElementById('rpcautooff').checked,
-          showRepoButton: document.getElementById('showRepoButton').checked
+          showRepoButton: document.getElementById('showRepoButton').checked,
+          address: document.getElementById('address').value,
+          port: document.getElementById('port').value,
         })
         
       }

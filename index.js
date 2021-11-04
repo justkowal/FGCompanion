@@ -84,7 +84,7 @@ app.whenReady().then(() => {
             width: 1000,
             height: 650,
           })
-          //win.removeMenu()
+          win.removeMenu()
           win.loadFile("index.html")
         }
       },
@@ -103,7 +103,7 @@ app.whenReady().then(() => {
   )
 
   function updateRPC(){
-      infogetter("127.0.0.1","8080",(info) => {
+      infogetter(settings.properties.address,settings.properties.port,(info) => {
         if(settings.properties.autoOffRPC && contextMenu.items[0].checked){
           try{
             console.log('Connecting RPC')
