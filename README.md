@@ -1,3 +1,6 @@
+# THIS BRANCH IS *NOT* RECOMMENDED FOR ANY USE CASE! ITS ONLY BACKUP OF WIP CODE
+
+# NO SUPPORT FOR THIS BRANCH IS PROVIDED
 # FlightGear Companion
 
 Little things that ARE making a diffrence!
