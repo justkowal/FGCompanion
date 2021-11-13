@@ -170,6 +170,7 @@
 
       function saveSettings(){
         api.send('save-settings',{
+          ...window.settings,
           statePattern: document.getElementById('statePattern').value,
           detailsPattern: document.getElementById('detailsPattern').value,
           statePatternRoute: document.getElementById('statePatternRoute').value,

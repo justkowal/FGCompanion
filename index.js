@@ -1,11 +1,13 @@
-const { app, Menu, Tray, BrowserWindow, ipcMain, screen } = require('electron')
+const { app, Menu, Tray, BrowserWindow, ipcMain, screen, dialog } = require('electron')
 const infogetter = require('./infogetter.js')
 const path = require("path")
 const fs = require('fs')
 const express = require("express")
 const { io } = require("socket.io-client")
-const { Server } = require("socket.io");
-const fetch = require('cross-fetch');
+const { Server } = require("socket.io")
+const fetch = require('cross-fetch')
+const { exec } = require("child_process");
+
 const serverio = new Server({  
   cors: {    
     origin: "*",     
@@ -18,8 +20,7 @@ const port = 2137
 const url = process.argv[2]
 const handleurl = url != undefined 
 
-var wstoken = ""
-var clientsocket = io('http://localhost:8081/', {auth:{token:""}})
+var userinfo = {}
 
 var settings = {
   properties:{},
@@ -32,6 +33,80 @@ var settings = {
     this.reloadSettings()
   }
 }
+
+settings.reloadSettings()
+
+if(settings.properties.fgpath == "" || settings.properties.fgpath == undefined){
+  dialog.showMessageBox({
+    message:"The FlightGear executable path is not specified in config\nIt's required for Join in Multiplayer\nA prompt will appear, please select executable path!",
+    type:"question",
+    title:"Join Request",
+    buttons:[
+      "Contiune with C172p",
+      "Continue with other aircraft (Launcher)",
+      "Cancel Join"
+    ],
+    cancelId:2
+  }).then((info)=>{
+}
+
+var clientsocket = io('http://localhost:8081/', {auth:{token:settings.properties.token}})
+clientsocket.on('requestjoinresponse',(info)=>{
+  showToast("Join Request",`${info.name} wants to join you in-game`,{btn1:"Accept",btn2:"Deny"},60000,(toastinfo)=>{
+    data = {
+      userid:info.userid,
+      packet:{}
+    }
+    if(toastinfo == 'btn1'){
+      infogetter(settings.properties.address,settings.properties.port,(info) => {
+        data.packet = {
+          accepted:true,
+          position:{
+            lat:info.latitude,
+            lon:info.longitude,
+            alt:info.altitude,
+            hdg:info.heading,
+          }
+        }
+      },()=>{
+        data.packet.accepted = false
+      })
+    }else{
+      data.packet = {
+        accepted:false
+      }
+    }
+    clientsocket.emit('sendjoinresponse',data)
+  })
+})
+clientsocket.on('joinresponse', (info)=>{
+  if(info.accepted){
+    showToast("Join Request",`Your request to join ${info.name} was accepted`,undefined,5000)
+    dialog.showMessageBox({
+      message:"Join in Multiplayer is supported ONLY for Cessna 172p\nYou can force game to start with other aircraft but it's unsupported\nDo you want to continue?",
+      type:"question",
+      title:"Join Request",
+      buttons:[
+        "Contiune with C172p",
+        "Continue with other aircraft (Launcher)",
+        "Cancel Join"
+      ],
+      cancelId:2
+    }).then((info)=>{
+      if(info.response == 0){
+        console.log("Starting game with Cessna 172p")
+        exec(settings.properties.fgpath + ` --lat=${info.position.lat} --lon=${info.position.lon} --altitude=${info.position.alt} --heading=${info.position.hdg} --roll=0 --pitch=0 --roc=0 --enable-freeze --aircraft=c172p`)
+      }else if(info.response == 1){
+        console.log("Starting game with other aircraft")
+      }
+    })
+  }else{
+    showToast("Join Request",`Your request to join ${info.name} was denied`,undefined,5000)
+  }
+})
+clientsocket.on('userinfo' , (info)=>{
+  userinfo = info
+})
 
 function parseFormattedText(text,info){
   var formattedText = text
@@ -63,10 +138,10 @@ function showToast(title,message,buttons,timeout,btncallback){
   ipcMain.once('btn-pressed',(event, args) => {
     try{
       toastwin.close()
+      btncallback(args)
     }catch(err){
       console.log(err)
     }
-    btncallback(args)
   })
   if(timeout != undefined){
     setTimeout(function(){try{toastwin.close()}catch(err){console.error(err)}},timeout)
@@ -100,40 +175,16 @@ app.whenReady().then(() => {
       )
       .then(resp => {
         console.log(resp)
-        wstoken = resp.token
-        console.log(wstoken)
-        clientsocket.auth.token = wstoken
-        clientsocket.on('connect',()=>{
-          clientsocket.on('requestjoinresponse',(info)=>{
-            showToast("Join Request",`${info.name} wants to join you in-game`,{btn1:"Accept",btn2:"Deny"},60000,(toastinfo)=>{
-              data = {
-                userid:info.userid,
-                packet:{}
-              }
-              if(toastinfo == 'btn1'){
-                data.packet = {
-                  accepted:true,
-                  joindata:{}
-                }
-              }else{
-                data.packet = {
-                  accepted:false
-                }
-              }
-              clientsocket.emit('sendjoinresponse',data)
-            })
-          })
-          clientsocket.on('joinresponse', (info)=>{
-            if(info.accepted){
-              showToast("Join Request",`Your request to join ${info.name} was accepted`,undefined,5000)
-            }else{
-              showToast("Join Request",`Your request to join ${info.name} was denied`,undefined,5000)
-            }
-          })
-        })
+        settings.properties.token = resp.token
+        settings.overwriteSettings(settings.properties)
+        clientsocket.auth.token = resp.token
         clientsocket.connect()
       })
       res.send(`<script>window.close()</script>`)
+    })
+    webapp.get('/join', (req,res) => {
+      clientsocket.emit("joinrequest", {userid:req.query.user})
+      res.send("You can close this window now")
     })
     webapp.listen(port, () => {
       console.log(`Temporary app server listening at http://localhost:${port}`)
@@ -247,8 +298,8 @@ app.whenReady().then(() => {
             btn=[{label : "Github Repo" , url : "https://github.com/justkowal/FGCompanion"}]
           }
 
-          if(settings.properties.showJoinInMP && wstoken != ""){
-            btn=[{label : "Join in Multiplayer", url : "http://localhost:2137/join?jointoken=abcd"}]
+          if(settings.properties.showJoinInMP && clientsocket.connected){
+            btn=[{label : "Join in Multiplayer", url : `http://localhost:2137/join?user=${userinfo.discordid}`}]
           }
 
           if(btn.length == 0){
