@@ -136,17 +136,6 @@ module.exports = function(address,port,cb,errcb){
       .then(resolve)
       .catch(reject)
     }),
-    new Promise(function(resolve,reject){
-      fetch(`http://${address}:${port}/json//orientation/heading-deg`)
-      .then(res => {
-        if (res.status >= 400) {
-          throw new Error("Bad response from server");
-        }
-        return res.json();
-      })
-      .then(resolve)
-      .catch(reject)
-    }),
   ];
   Promise.all(promises).then(vals => {
     icao = vals[5].value.split(" ")[2]
@@ -192,8 +181,7 @@ module.exports = function(address,port,cb,errcb){
         airspace:airspace,
         emoji:emoji,
         latitude:vals[1].latitude,
-        longitude:vals[1].longitude,
-        heading:vals[9].value,
+        longitude:vals[1].longitude
       }
     )
   }).catch(errcb)                          
