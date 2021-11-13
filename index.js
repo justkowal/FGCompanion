@@ -240,6 +240,21 @@ app.whenReady().then(() => {
             ete = Date.now() + info.ete*1000
           }
           console.log(info)
+
+          btn = []
+
+          if(settings.properties.showRepoButton){
+            btn=[{label : "Github Repo" , url : "https://github.com/justkowal/FGCompanion"}]
+          }
+
+          if(settings.properties.showJoinInMP && wstoken != ""){
+            btn=[{label : "Join in Multiplayer", url : "http://localhost:2137/join?jointoken=abcd"}]
+          }
+
+          if(btn.length == 0){
+            btn = undefined
+          }
+
           if(info.desticao == '' || info.depicao == ''){
               client.updatePresence({
                 state: parseFormattedText(settings.properties.statePattern, info),
@@ -250,7 +265,7 @@ app.whenReady().then(() => {
                 largeImageText: info.aircraft,
                 smallImageKey: "paint",
                 smallImageText: info.paintjobtext,
-                buttons : (settings.properties.showRepoButton) ? [{label : "🐱‍💻Github Repo" , url : "https://github.com/justkowal/FGCompanion"}] : undefined ,
+                buttons : btn,
                 instance: true,
               })
             }else{
@@ -263,7 +278,7 @@ app.whenReady().then(() => {
                 largeImageText: info.aircraft,
                 smallImageKey: "paint",
                 smallImageText: info.paintjobtext,
-                buttons : (settings.properties.showRepoButton) ? [{label : "🐱‍💻Github Repo" , url : "https://github.com/justkowal/FGCompanion"}] : undefined ,
+                buttons : btn,
                 instance: true,
               })
             }

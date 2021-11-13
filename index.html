@@ -191,7 +191,7 @@
       }
 
       function login(){
-        var loginwindow = window.open("https://discord.com/api/oauth2/authorize?client_id=908005676612194335&redirect_uri=http%3A%2F%2Flocalhost%3A2137%2F&response_type=code&scope=identify%20email","Discord Login",`width=${screen.width},height=${screen.height}`)
+        var loginwindow = window.open("https://discord.com/api/oauth2/authorize?client_id=908005676612194335&redirect_uri=http%3A%2F%2Flocalhost%3A2137%2Fauth&response_type=code&scope=identify%20email","Discord Login",`width=${screen.width},height=${screen.height}`)
         var checkhref = function(cb){
           try{
             url = new URL(loginwindow.location.href)
