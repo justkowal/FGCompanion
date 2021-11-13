@@ -157,8 +157,11 @@
       })
 
       api.recieve('account-info', (response) => {
-        if (response.status) {
+        if (response[0].status) {
           console.log('user info available')
+          document.getElementById('profile').innerHTML = `
+          <div class="center"><h1>Work in progress</h1></div>
+          `
         }else{
           console.log('user not logged in')
           document.getElementById('profile').innerHTML = `

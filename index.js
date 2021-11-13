@@ -211,6 +211,7 @@ app.whenReady().then(() => {
       
     })
     ipcMain.on('get-account-info', (event, arg) => {
+      console.log(clientsocket.connected)
       if(clientsocket.connected){
         event.reply('account-info',{status:true, info:userinfo})
       }else{
