@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toast</title>
+    <style>
+        @keyframes popup {
+            from {left: 100vw;}
+            to {left:0;}
+        }
+    </style>
+</head>
+<body style="padding:0;overflow:hidden;">
+    <div style="position:relative;
+    background-color:#444;
+    font-family: sans-serif;
+    border-radius: 5px;
+    width: 85vw;
+    height: 79vh;
+    padding:5px;
+    color: white;
+    animation-name: popup;
+    animation-duration: 0.25s;
+    animation-timing-function: ease-in-out;
+    left: 0;
+    ">
+        <div><b id="title"></b></div>
+        <div id="content" style="position:relative;top:5px;"><br></div>
+        <div id="btn1" onclick="api.send('btn-pressed','btn1')" style="position:absolute;top:65%;height:20%;background-color:#333;padding:5px;border-radius:5px;width: 43%;text-align:center"></div>
+        <div id="btn2" onclick="api.send('btn-pressed','btn2')" style="position:absolute;top:65%;left:51%;height:20%;background-color:#333;padding:5px;border-radius:5px;width: 43%;text-align:center"></div>
+    </div>
+</body>
+<script type="text/javascript">
+    function loadContent(rawcontent) {
+        content = JSON.parse(rawcontent)
+        console.log(content,rawcontent)
+        document.getElementById("title").innerHTML = content.title
+        document.getElementById("content").innerHTML = content.content
+        if(content.btn1!=undefined){
+            document.getElementById("btn1").innerHTML = content.btn1
+        }else{
+            document.getElementById("btn1").style.display = "none"
+        }
+        if(content.btn2!=undefined){
+            document.getElementById("btn2").innerHTML = content.btn2
+        }else{
+            document.getElementById("btn2").style.display = "none"
+        }
+    }
+</script>
+</html>
