@@ -81,7 +81,7 @@ app.whenReady().then(() => {
       })
     });
     serverio.listen(3000);
-    webapp.get('/', (req, res) => {
+    webapp.get('/auth', (req, res) => {
       console.log(req.query)
       fetch("http://localhost:8081/auth/gettoken",{
         method: "POST",
