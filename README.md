@@ -16,7 +16,7 @@ Proceed with caution!
   - [X] Basic Rich Presence
   - [X] Customization Options
   - [X] Custom Placeholders
-  - [ ] Join in Multiplayer (Coming Soon)
+  - [X] Join in Multiplayer
 - [ ] Auto Updates (Coming REALLY Soon)
 - [ ] Addon App Store (Coming Soon)
 - [ ] LiveATC Dynamic Radio
