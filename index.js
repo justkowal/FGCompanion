@@ -36,20 +36,6 @@ var settings = {
 
 settings.reloadSettings()
 
-if(settings.properties.fgpath == "" || settings.properties.fgpath == undefined){
-  dialog.showMessageBox({
-    message:"The FlightGear executable path is not specified in config\nIt's required for Join in Multiplayer\nA prompt will appear, please select executable path!",
-    type:"question",
-    title:"Join Request",
-    buttons:[
-      "Contiune with C172p",
-      "Continue with other aircraft (Launcher)",
-      "Cancel Join"
-    ],
-    cancelId:2
-  }).then((info)=>{
-}
-
 var clientsocket = io('http://localhost:8081/', {auth:{token:settings.properties.token}})
 clientsocket.on('requestjoinresponse',(info)=>{
   showToast("Join Request",`${info.name} wants to join you in-game`,{btn1:"Accept",btn2:"Deny"},60000,(toastinfo)=>{
@@ -150,6 +136,26 @@ function showToast(title,message,buttons,timeout,btncallback){
 
 app.whenReady().then(() => {
   if(!handleurl){
+    if(settings.properties.fgpath == "" || settings.properties.fgpath == undefined){
+      dialog.showMessageBoxSync({
+        message:"The FlightGear executable path is not specified in config\nIt's required for Join in Multiplayer\nDue to Electron Bug you need to add property 'fgpath' to your settings.json file manually.",
+        type:"question",
+        title:"FGCompanion Setup",
+        buttons:[
+          "OK"
+        ]
+      })
+      /*
+      Section disabled because of electron bug
+      See https://github.com/electron/electron/issues/31152
+      settings.properties.fgpath  = dialog.showOpenDialogSync({
+        title:"FGCompanion Setup",
+        properties: ['openFile']
+      })
+      */
+      settings.properties.fgpath = ""
+      settings.overwriteSettings(settings.properties)
+    }
     serverio.on("connection", (socket) => {
       socket.on("handleurl",(url)=>{
         console.log(url)
@@ -205,7 +211,11 @@ app.whenReady().then(() => {
       
     })
     ipcMain.on('get-account-info', (event, arg) => {
-      event.reply('account-info',{status:false, err:"User not logged in"})
+      if(clientsocket.connected){
+        event.reply('account-info',{status:true, info:userinfo})
+      }else{
+        event.reply('account-info',{status:false, err:"User not logged in"})
+      }
     })
     app.on('window-all-closed', e => e.preventDefault())
     var suffix = ".png"
