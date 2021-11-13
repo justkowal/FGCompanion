@@ -20,7 +20,8 @@
           <li class="tab col s3"><a href="#tab1">General</a></li>
           <li class="tab col s3"><a class="active" href="#tab2">Rich Presence</a></li>
           <li class="tab col s3 disabled"><a href="#tab3">Addon Store</a></li>
-          <li class="tab col s3"><a href="#tab4">Credits & About</a></li>
+          <li class="tab col s3"><a href="#tab4">My Profile</a></li>
+          <li class="tab col s3"><a href="#tab5">Credits & About</a></li>
         </ul>
       </div>
       <div id="tab1" class="col s12">
@@ -113,6 +114,13 @@
       <div id="tab3" class="col s12">
       </div>
       <div id="tab4" class="col s12">
+        <div id="profile">
+          <!--<br>
+          <a href="#" class="btn indigo accent-3"><i class="material-icons left">discord</i>Log In with Discord</a>
+          -->
+        </div>
+      </div>
+      <div id="tab5" class="col s12">
         <div class="container">
           <br>
           Created with &#10084;&#65039; by Jakub Kowal (JustKowal)<br>
@@ -125,29 +133,47 @@
       </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
     <script>
       api.send('get-settings',"")
       api.recieve('get-settings-reply', (arg,event)=>{
-          window.settings = arg[0]
-          console.log(window.settings) 
-          document.getElementById('statePattern').value = settings.statePattern
-          document.getElementById('detailsPattern').value = settings.detailsPattern
-          document.getElementById('statePatternRoute').value = settings.statePatternRoute
-          document.getElementById('detailsPatternRoute').value = settings.detailsPatternRoute
-          document.getElementById('rpcautooff').checked = settings.autoOffRPC
-          document.getElementById('showRepoButton').checked = settings.showRepoButton
-          document.getElementById('address').value = settings.address
-          document.getElementById('port').value = settings.port
+        window.settings = arg[0]
+        console.log(window.settings) 
+        document.getElementById('statePattern').value = settings.statePattern
+        document.getElementById('detailsPattern').value = settings.detailsPattern
+        document.getElementById('statePatternRoute').value = settings.statePatternRoute
+        document.getElementById('detailsPatternRoute').value = settings.detailsPatternRoute
+        document.getElementById('rpcautooff').checked = settings.autoOffRPC
+        document.getElementById('showRepoButton').checked = settings.showRepoButton
+        document.getElementById('address').value = settings.address
+        document.getElementById('port').value = settings.port
       })
       api.recieve('save-settings-reply',(arg)=>{
-          if(arg == "ok"){
-            M.toast({html: 'Settings Saved!', classes: 'rounded green'})
-          }else{
-            M.toast({html: 'Error occured!', classes: 'rounded red'});
-          }  
+        if(arg == "ok"){
+          M.toast({html: 'Settings Saved!', classes: 'rounded green'})
+        }else{
+          M.toast({html: 'Error occured!', classes: 'rounded red'});
+        }  
       })
+
+      api.recieve('account-info', (response) => {
+        if (response[0].status) {
+          console.log('user info available')
+          document.getElementById('profile').innerHTML = `
+          <div class="center"><h1>Work in progress</h1></div>
+          `
+        }else{
+          console.log('user not logged in')
+          document.getElementById('profile').innerHTML = `
+          <br>
+          <a href="#" class="center btn indigo accent-3" onclick="login()"><i class="material-icons left">discord</i>Log In with Discord</a>
+          `
+        }
+      })
+
       function saveSettings(){
         api.send('save-settings',{
+          ...window.settings,
           statePattern: document.getElementById('statePattern').value,
           detailsPattern: document.getElementById('detailsPattern').value,
           statePatternRoute: document.getElementById('statePatternRoute').value,
@@ -163,7 +189,26 @@
       var instance = M.Tabs.init(el);
       var el = document.querySelectorAll('.tooltipped')
       var instances = M.Tooltip.init(el);
+
+      function loadprofile(){
+        api.send('get-account-info')
+      }
+
+      function login(){
+        var loginwindow = window.open("https://discord.com/api/oauth2/authorize?client_id=908005676612194335&redirect_uri=http%3A%2F%2Flocalhost%3A2137%2Fauth&response_type=code&scope=identify%20email","Discord Login",`width=${screen.width},height=${screen.height}`)
+        var checkhref = function(cb){
+          try{
+            url = new URL(loginwindow.location.href)
+            console.log(url)
+          }catch(err){
+            console.log(err)
+          }
+          setTimeout(cb,500,cb)
+        }
+        checkhref(checkhref)
+      }
       
-    </script>
+      loadprofile()
+   </script>
   </body>
 </html>
