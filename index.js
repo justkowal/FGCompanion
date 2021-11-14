@@ -36,7 +36,7 @@ var settings = {
 
 settings.reloadSettings()
 
-var clientsocket = io('http://localhost:8081/', {auth:{token:settings.properties.token}})
+var clientsocket = io('https://fgcpserver.loca.lt', {auth:{token:settings.properties.token}})
 clientsocket.on('requestjoinresponse',(info)=>{
   showToast("Join Request",`${info.name} wants to join you in-game`,{btn1:"Accept",btn2:"Deny"},60000,(toastinfo)=>{
     data = {
@@ -164,7 +164,7 @@ app.whenReady().then(() => {
     serverio.listen(3000);
     webapp.get('/auth', (req, res) => {
       console.log(req.query)
-      fetch("http://localhost:8081/auth/gettoken",{
+      fetch("https://fgcpserver.loca.lt/auth/gettoken",{
         method: "POST",
         headers: {
           "Content-Type": "application/json"

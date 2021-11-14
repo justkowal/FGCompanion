@@ -16,7 +16,7 @@ Proceed with caution!
   - [X] Basic Rich Presence
   - [X] Customization Options
   - [X] Custom Placeholders
-  - [X] Join in Multiplayer
+  - [X] Join in Multiplayer (For Server refer to https://github.com/justkowal/FGCPServer)
 - [ ] Auto Updates (Coming REALLY Soon)
 - [ ] Addon App Store (Coming Soon)
 - [ ] LiveATC Dynamic Radio
