@@ -1,4 +1,4 @@
-# List of available/planned aircrafts in official Rich Presence
+# List of available/planned aircraft in official Rich Presence
 
 - [X] Cessna 172p
 - [X] Airbus A320

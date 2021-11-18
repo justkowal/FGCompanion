@@ -38,31 +38,34 @@ settings.reloadSettings()
 
 var clientsocket = io('https://fgcpserver.loca.lt', {auth:{token:settings.properties.token}})
 clientsocket.on('requestjoinresponse',(info)=>{
+  console.log(info)
   showToast("Join Request",`${info.name} wants to join you in-game`,{btn1:"Accept",btn2:"Deny"},60000,(toastinfo)=>{
-    data = {
+    senddata = {
       userid:info.userid,
       packet:{}
     }
     if(toastinfo == 'btn1'){
       infogetter(settings.properties.address,settings.properties.port,(info) => {
-        data.packet = {
+        senddata.packet = {
           accepted:true,
           position:{
             lat:info.latitude,
             lon:info.longitude,
-            alt:info.altitude,
+            alt:info.alt,
             hdg:info.heading,
           }
         }
+        clientsocket.emit('sendjoinresponse',senddata)
       },()=>{
-        data.packet.accepted = false
+        senddata.packet.accepted = false
+        clientsocket.emit('sendjoinresponse',senddata)
       })
     }else{
-      data.packet = {
+      senddata.packet = {
         accepted:false
       }
+      clientsocket.emit('sendjoinresponse',senddata)
     }
-    clientsocket.emit('sendjoinresponse',data)
   })
 })
 clientsocket.on('joinresponse', (info)=>{
@@ -346,7 +349,7 @@ app.whenReady().then(() => {
             }
             appIcon.setImage(greendot)
           },(error) => {
-            console.log(error)
+            console.log("Can't reach data from game (game closed or http daemon disabled)")
             appIcon.setImage(reddot)
             if(settings.properties.autoOffRPC && contextMenu.items[0].checked){
               console.log('Disconnecting RPC')
