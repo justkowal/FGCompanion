@@ -7,3 +7,5 @@ target
 .fuse_hidden000000ce00000001
 FlightGear Discord Rich Presence-win32-x64.zip
 FGCompanion.zip
+settings.json
+package-lock.json
