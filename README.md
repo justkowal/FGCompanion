@@ -4,6 +4,20 @@ Little things that ARE making a diffrence!
 
 Set of small features that are enhancing the FG experience. (List of planned/added features below)
 
+#### Important notice
+
+After next major update (stefan-0.5) this branch will be marked as legacy!
+
+Legacy branch will recieve Version level updates (when applicable) and should be kept in the same general concept as it is now.
+
+Next update (fgcp-latest-0.6) will be completely diffent because it will be trying to replace default launcher with many fresh features, cleaner interface, more accesible settings and loads more. However it will be compatible with both stefan-0.5 and fgcp-legacy-0.6 when it comes to social server infrastructure.
+
+The fgcp-legacy will introduce all tweaks contained in fgcp-latest versions but won't replace your launcher.
+
+This versioning system will be discarded after 1.0, after that legacy branch will only recieve compatibility updates (marked as fgcp-legacy-1.0-sf1 for example)
+
+As they said, Set your goals high to achieve great things!
+
 ##### Warning!
 
 This project is work in progress and is not polished. Code is messy and really bad at error handling.
