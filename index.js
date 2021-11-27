@@ -90,7 +90,11 @@ clientsocket.on('joinresponse', (info)=>{
       }
     })
   }else{
-    showToast("Join Request",`Your request to join ${info.name} was denied`,undefined,5000)
+    if(info.error!=undefined){
+      showToast("Join Request",`Your request cannot be processed because ${info.error}`,undefined,5000)
+    }else{
+      showToast("Join Request",`Your request to join ${info.name} was denied`,undefined,5000)
+    }
   }
 })
 clientsocket.on('userinfo' , (info)=>{
@@ -141,7 +145,7 @@ app.whenReady().then(() => {
   if(!handleurl){
     if(settings.properties.fgpath == "" || settings.properties.fgpath == undefined){
       dialog.showMessageBoxSync({
-        message:"The FlightGear executable path is not specified in config\nIt's required for Join in Multiplayer\nDue to Electron Bug you need to add property 'fgpath' to your settings.json file manually.",
+        message:"The FlightGear executable path is not specified in config\nIt's required for Join in Multiplayer\nPlease pick path to your FG executable",
         type:"question",
         title:"FGCompanion Setup",
         buttons:[
@@ -149,13 +153,14 @@ app.whenReady().then(() => {
         ]
       })
       /*
-      Section disabled because of electron bug
+      Section can malfunction because of electron bug
       See https://github.com/electron/electron/issues/31152
+      */
       settings.properties.fgpath  = dialog.showOpenDialogSync({
         title:"FGCompanion Setup",
         properties: ['openFile']
       })
-      */
+      
       settings.properties.fgpath = ""
       settings.overwriteSettings(settings.properties)
     }
