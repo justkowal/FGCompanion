@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/hopkuba/FGCompanion#readme",
   "dependencies": {
-    "cross-fetch": "^3.1.4",
+    "cross-fetch": "^3.1.5",
     "custom-protocol-handler": "^3.0.1",
     "discord-rich-presence": "^0.0.8",
     "discord-rpc": "^4.0.1",
