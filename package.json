@@ -23,7 +23,7 @@
     "discord-rich-presence": "^0.0.8",
     "discord-rpc": "^4.0.1",
     "electron": "^15.3.5",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "socket.io": "^4.3.2",
     "socket.io-client": "^4.3.2"
   }
